@@ -4,11 +4,30 @@
 
 .overlay:not([data-field="photo"]){display:flex;align-items:center;white-space:nowrap}
 .sample-watermark{position:absolute;left:3%;top:43%;width:94%;text-align:center;transform:rotate(-29deg);font:bold 42pt Arial,sans-serif;color:rgba(163,17,17,.42);pointer-events:none;z-index:20}
+.sample-notice{position:absolute;left:3.5%;top:1%;width:93%;padding:5pt 2pt;text-align:center;font:bold 10pt Arial,sans-serif;background:#fff0d5;color:#a01414;border:1pt solid #a01414;z-index:21}
 .demo-label{background:#fff0d5;color:#8c1515;padding:12px;border-radius:7px;font-weight:700}
-@media print{.sample-watermark{display:block!important;visibility:visible!important}}
+@media print{.sample-watermark,.sample-notice{display:block!important;visibility:visible!important}}
 
 .overlay:not([data-field="photo"]){align-items:flex-start;line-height:1}
 .overlay[data-field="pan"]{justify-content:center}
 .lower-field{outline:0;cursor:default}
 .lower-field[data-lower="photo"]{display:block}
+.lower-sample{position:absolute;left:12%;top:95%;width:80%;background:#fff0d5;color:#a01414;font:bold 9pt Arial,sans-serif;text-align:center;border:1pt solid #a01414;z-index:22}
+
 .overlay{font-family:Helvetica,Arial,sans-serif;font-weight:400;font-style:normal;letter-spacing:normal}
+
+#status:empty{display:none}
+
+/* Form presentation only; printed document styles stay independent. */
+@media screen{
+body{background:#f5f6f8;color:#202b3b;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{background:#fff;color:#202b3b;border-bottom:1px solid #e3e7ed;padding:21px max(24px,calc((100vw - 1040px)/2));align-items:center}
+.brand{display:flex;align-items:center;gap:11px}.brand-icon{width:34px;height:38px;border-radius:8px;background:#284ee2;color:white;display:grid;place-items:center;font-size:21px;font-weight:700}.brand strong{font-size:20px;letter-spacing:-.6px}.brand-light{font-weight:400;color:#7b8595}.header-tag{font-size:10px!important;letter-spacing:2px;color:#8791a1!important;font-weight:650}
+main{grid-template-columns:minmax(0,600px);padding:42px 20px 56px;gap:0}aside{border:1px solid #e0e5ec;border-radius:18px;padding:34px 36px 23px;box-shadow:0 12px 40px #23344f08;background:white}
+.intro{margin-bottom:25px}.eyebrow{font-size:10px;letter-spacing:1.7px;font-weight:700;color:#4666c5}h1{font-size:29px;letter-spacing:-.9px;margin:8px 0 7px;font-weight:650}.intro p{margin:0;font-size:13px;color:#7b8595}
+.photo-upload{position:relative;border:1px dashed #bfcce8;background:#f8faff;border-radius:11px;padding:19px;display:flex;align-items:center;gap:14px;margin:0 0 26px;overflow:hidden;cursor:pointer}.upload-icon{display:grid;place-items:center;flex-shrink:0;width:42px;height:42px;border:1px solid #dce4f7;border-radius:10px;background:#fff;color:#3455c7;font-size:24px}.photo-upload strong{display:block;font-size:13px;font-weight:600}.photo-upload small{display:block;margin-top:5px;font-size:11px;color:#7b8595;overflow-wrap:anywhere}.photo-upload input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;margin:0}.photo-upload:focus-within{outline:2px solid #4166d8;outline-offset:3px}
+.section-label{font-size:10px;letter-spacing:1.6px;font-weight:700;color:#8b95a4;padding-bottom:13px;border-bottom:1px solid #edf0f4;margin-bottom:18px}.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:19px 18px}.field-grid label{margin:0;font-size:12px;font-weight:600;color:#435065}.wide{grid-column:1/-1}input,select{height:45px;margin-top:8px;border:1px solid #dde3eb;border-radius:8px;padding:10px 13px;font-size:13px;color:#26364c;background:#fff;transition:border-color .15s,box-shadow .15s;min-width:0}input::placeholder{color:#a0a8b5}input:focus,select:focus{outline:none;border-color:#6280e2;box-shadow:0 0 0 3px #345be510}#pan{letter-spacing:1.6px;text-transform:uppercase}.form-actions{border-top:1px solid #edf0f4;margin-top:27px;padding-top:19px}.action-hint{font-size:11px;color:#929aaa;display:block;margin-bottom:12px}button#print{height:47px;border-radius:8px;background:#2d50d9;font-size:13px;display:flex;align-items:center;justify-content:center;gap:14px;box-shadow:0 3px 8px #2d50d91a}button#print:hover:enabled{background:#2344c1}button#print:disabled{background:#9da9c8;opacity:.7}.note{margin:17px 0 0;text-align:center;font-size:10px;color:#9099a7;line-height:1.5}#status{font-size:12px;background:#f2f5fc;color:#566987}
+}
+@media screen and (max-width:520px){header{padding:17px 20px;flex-direction:row;gap:8px}.header-tag{display:none}main{padding:22px 12px}aside{padding:26px 21px 20px;border-radius:14px}h1{font-size:26px}.field-grid{gap:18px 12px}}
+
+@media screen{body{background:#172333 url("legal-background.jpg") center center/cover fixed no-repeat}main{background:linear-gradient(90deg,rgba(12,24,40,.20),rgba(12,24,40,.08));min-height:calc(100vh - 81px)}aside{box-shadow:0 22px 70px #0004;background:rgba(255,255,255,.98)}header{background:rgba(255,255,255,.98)}}

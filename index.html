@@ -1,9 +1,17 @@
 <!doctype html>
-<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Proforma Fill & Print</title><link rel="stylesheet" href="style.css"></head><body>
-<header><strong>Proforma Fill & Print</strong><span>Details bharo · Print karo</span></header>
-<main><aside><h1>Applicant details</h1><p>Isi folder mein <b>performa.pdf</b> rakhein. Proforma automatically load hogi.</p><p id="status" role="status">PDF library load ho rahi hai…</p>
-<form id="details"><label>Photo upload<input id="photo" type="file" accept="image/*"></label><label>Name<input id="name" autocomplete="name" maxlength="80"></label><label>PAN number<input id="pan" maxlength="10" placeholder="ABCDE1234F" pattern="[A-Za-z]{5}[0-9]{4}[A-Za-z]" title="PAN mein 5 letters, 4 digits aur 1 letter hona chahiye"></label><label>Gender<select id="gender"><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option></select></label><label>Date of birth<input id="dob" type="date"></label><label>Father's name<input id="father" maxlength="80"></label><button id="print" type="submit" disabled>Print / Save as PDF</button></form>
-<p class="note">Internet PDF library load karne ke liye chahiye. Details aur files is page se kisi server par upload nahi hoti.</p></aside>
+<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TrueLegal Associates | Proforma</title><link rel="stylesheet" href="style.css"></head><body>
+<header><div class="brand"><span class="brand-icon" aria-hidden="true">T</span><strong>TrueLegal<span class="brand-light"> Associates</span></strong></div><span class="header-tag">FILL. PRINT. DONE.</span></header>
+<main><aside><div class="intro"><span class="eyebrow">DOCUMENT PREPARATION</span><h1>Applicant details</h1><p>Apni details bharein aur proforma print karein.</p></div><p id="status" role="status">PDF library load ho rahi hai…</p>
+<form id="details">
+<label class="photo-upload"><span class="upload-icon" aria-hidden="true">↑</span><span><strong>Applicant photo</strong><small id="photoHint">Choose a clear portrait photo</small></span><input id="photo" type="file" accept="image/*" aria-label="Upload applicant photo"></label>
+<div class="section-label">PERSONAL INFORMATION</div><div class="field-grid">
+<label class="wide">Full name<input id="name" autocomplete="name" maxlength="80" placeholder="Enter applicant’s full name"></label>
+<label class="wide">Father’s name<input id="father" maxlength="80" placeholder="Enter father’s full name"></label>
+<label>Date of birth<input id="dob" type="date"></label>
+<label>Gender<select id="gender"><option value="">Select gender</option><option>Male</option><option>Female</option><option>Other</option></select></label>
+<label class="wide">PAN number<input id="pan" maxlength="10" placeholder="ABCDE1234F" pattern="[A-Za-z]{5}[0-9]{4}[A-Za-z]" title="PAN mein 5 letters, 4 digits aur 1 letter hona chahiye" spellcheck="false" autocapitalize="characters"></label>
+</div><div class="form-actions"><span class="action-hint">Details check karke aage badhein.</span><button id="print" type="submit" disabled>Print / Save as PDF <span aria-hidden="true">↗</span></button></div></form>
+<p class="note">Aapki photo aur details sirf is browser mein process hoti hain.</p></aside>
 <section aria-hidden="true"><div id="pages"><div class="empty">Isi folder ki performa.pdf yahan dikhegi.</div></div></section></main>
 <script type="module">
 const $=id=>document.getElementById(id);
@@ -17,9 +25,61 @@ function value(k){if(k==='dob'){const d=$('dob').value;return d?d.split('-').rev
 function update(){updateLower();for(const k of keys){const el=document.querySelector(`[data-field="${k}"]`);if(!el)continue;const p=positions[k];Object.assign(el.style,{left:p.x+'%',top:p.y+'%',width:p.w+'%',height:p.h+'%',fontSize:p.size+'pt'});if(k==='photo'){el.replaceChildren();if(photoURL){const img=new Image();img.src=photoURL;el.append(img);}else el.textContent='Photo';}else el.textContent=value(k);el.classList.toggle('placeholder',k==='photo'&&!photoURL);}}
 function updateLower(){for(const [k,p] of Object.entries(lower)){const el=document.querySelector(`[data-lower="${k}"]`);if(!el)continue;Object.assign(el.style,{left:p.x+'%',top:p.y+'%',width:p.w+'%',height:p.h+'%',fontSize:p.size+'pt'});el.replaceChildren();if(k==='photo'){if(photoURL){const img=new Image();img.src=photoURL;el.append(img);}}else el.textContent=value(k);}}
 function draggable(el,k){el.onpointerdown=e=>{if(e.button!==0)return;e.preventDefault();el.setPointerCapture(e.pointerId);const box=el.parentElement.getBoundingClientRect(),sx=e.clientX,sy=e.clientY,start={...positions[k]};el.onpointermove=ev=>{positions[k].x=Math.max(0,Math.min(100-positions[k].w,start.x+(ev.clientX-sx)/box.width*100));positions[k].y=Math.max(0,Math.min(100-positions[k].h,start.y+(ev.clientY-sy)/box.height*100));update();for(const p of ['x','y']){const i=document.querySelector(`[data-control="${k}-${p}"]`);if(i)i.value=positions[k][p].toFixed(1);}};el.onpointerup=el.onpointercancel=()=>{el.onpointermove=null;persist();};};}
-async function loadPDF(data){$('print').disabled=true;loaded=false;$('status').textContent='PDF khul rahi hai…';try{const doc=await pdfjs.getDocument({data}).promise;const frag=document.createDocumentFragment();for(let n=1;n<=doc.numPages;n++){const page=await doc.getPage(n),v=page.getViewport({scale:1});const sheet=document.createElement('div');sheet.className='sheet';sheet.style.width=v.width+'pt';sheet.style.height=v.height+'pt';const canvas=document.createElement('canvas');const renderV=page.getViewport({scale:2});canvas.width=renderV.width;canvas.height=renderV.height;sheet.append(canvas);await page.render({canvasContext:canvas.getContext('2d'),viewport:renderV}).promise;if(n===1){for(const k of keys){const el=document.createElement('div');el.className='overlay';el.dataset.field=k;el.title=k+' — drag to position';draggable(el,k);sheet.append(el);}}if(n===1){for(const k of Object.keys(lower)){const el=document.createElement("div");el.className="overlay lower-field";el.dataset.lower=k;sheet.append(el);}}frag.append(sheet);} $('pages').replaceChildren(frag);const printStyle=document.createElement('style');printStyle.textContent=`@page {size:${(await doc.getPage(1)).getViewport({scale:1}).width}pt ${(await doc.getPage(1)).getViewport({scale:1}).height}pt;margin:0;}`;document.querySelector('#pageSize')?.remove();printStyle.id='pageSize';document.head.append(printStyle);loaded=true;update();$('print').disabled=false;$('status').textContent=`${doc.numPages} page loaded. Details pehle page par aayengi; print dialog mein alignment check karein.`;}catch(e){$('status').textContent='PDF nahi khuli. Folder mein valid, password-free performa.pdf rakhein.';}}
+async function loadPDF(data){
+	$('print').disabled=true;
+	loaded=false;
+	$('status').textContent='PDF khul rahi hai…';
+	try{
+		const doc=await pdfjs.getDocument({data}).promise;
+		const frag=document.createDocumentFragment();
+		for(let n=1;n<=doc.numPages;n++){
+			const page=await doc.getPage(n),v=page.getViewport({scale:1});
+			const sheet=document.createElement('div');
+			sheet.className='sheet';
+			sheet.style.width=v.width+'pt';
+			sheet.style.height=v.height+'pt';
+			const canvas=document.createElement('canvas');
+			const renderV=page.getViewport({scale:2});
+			canvas.width=renderV.width;
+			canvas.height=renderV.height;
+			sheet.append(canvas);
+			await page.render({canvasContext:canvas.getContext('2d'),viewport:renderV}).promise;
+			if(n===1){
+				for(const k of keys){
+					const el=document.createElement('div');
+					el.className='overlay';
+					el.dataset.field=k;
+					el.title=k+' — drag to position';
+					draggable(el,k);
+					sheet.append(el);
+				}
+				for(const k of Object.keys(lower)){
+					const el=document.createElement('div');
+					el.className='overlay lower-field';
+					el.dataset.lower=k;
+					sheet.append(el);
+				}
+			}
+			frag.append(sheet);
+		}
+		$('pages').replaceChildren(frag);
+		const firstPage=await doc.getPage(1);
+		const pageSize=firstPage.getViewport({scale:1});
+		const printStyle=document.createElement('style');
+		printStyle.textContent=`@page {size:${pageSize.width}pt ${pageSize.height}pt;margin:0;}`;
+		document.querySelector('#pageSize')?.remove();
+		printStyle.id='pageSize';
+		document.head.append(printStyle);
+		loaded=true;
+		update();
+		$('print').disabled=false;
+		$('status').textContent='';
+	}catch(e){
+		$('status').textContent='PDF nahi khuli. Folder mein valid, password-free performa.pdf rakhein.';
+	}
+}
 for(const k of keys.filter(k=>k!=='photo'))$(k).addEventListener('input',()=>{if(k==='pan')$('pan').value=$('pan').value.toUpperCase();update();});
-$('photo').onchange=()=>{const file=$('photo').files[0];if(!file)return;if(!file.type.startsWith('image/'))return;if(photoURL)URL.revokeObjectURL(photoURL);photoURL=URL.createObjectURL(file);update();};
+$('photo').onchange=()=>{const file=$('photo').files[0];if(!file)return;if(!file.type.startsWith('image/'))return;$('photoHint').textContent=file.name;if(photoURL)URL.revokeObjectURL(photoURL);photoURL=URL.createObjectURL(file);update();};
 $('details').onsubmit=async e=>{e.preventDefault();if(!loaded)return;await Promise.all([...document.querySelectorAll('.overlay img')].map(img=>img.decode().catch(()=>{})));window.print();};
 try{pdfjs=await import('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js').then(()=>window.pdfjsLib);pdfjs.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';$('status').textContent='performa.pdf load kar rahe hain…';if(location.protocol==='file:'){$('status').textContent='Browser folder ki PDF directly read nahi kar sakta. Is folder ko local web server se kholein (jaise VS Code Live Server), tab performa.pdf automatically load hogi.';}else{try{const r=await fetch('performa.pdf');if(!r.ok)throw Error();await loadPDF(new Uint8Array(await r.arrayBuffer()));}catch{$('status').textContent='Folder mein performa.pdf nahi mili. File rakhkar page reload karein.';}}}catch{$('status').textContent='PDF library load nahi hui. Internet check karke page reload karein.';}
 </script></body></html>
